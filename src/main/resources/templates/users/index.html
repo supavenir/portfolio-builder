@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilisateurs</title>
+</head>
+<body>
+{{#users.size}}
+<h1>Utilisateurs</h1>
+{{/users.size}}
+<ul>
+{{#users}}
+    <li>{{firstName}} {{lastName}}</li>
+{{/users}}
+
+    {{#user}}
+        {{login}}
+    {{/user}}
+</ul>
+</body>
+</html>
