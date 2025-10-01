@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,5 +34,18 @@ public class UserController {
             return new ModelAndView("users/index","user",opt.get());
         }
         return null;
+    }
+
+    @GetMapping("/test-add/{firstname}/{lastname}")
+    public RedirectView testAdd(
+            @PathVariable String firstname,
+            @PathVariable String lastname
+    ){
+        User u = new User();
+        u.setFirstName(firstname);
+        u.setLastName(lastname);
+        u.setLogin(firstname+"."+lastname);
+        userRepository.save(u);
+        return new RedirectView("/users");
     }
 }

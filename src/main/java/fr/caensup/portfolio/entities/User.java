@@ -9,7 +9,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class User {
     @Id
     private UUID id=UUID.randomUUID();
