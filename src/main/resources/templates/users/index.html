@@ -1,21 +1,62 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Utilisateurs</title>
-</head>
-<body>
+{{> /include/header }}
+
 {{#users.size}}
-<h1>Utilisateurs</h1>
+<h1 class="ui header">Utilisateurs</h1>
+<div class="ui menu">
+    <div class="item">
+        <a href="/users/add" class="ui orange button">Ajouter...</a>
+    </div>
+    <div class="item">
+        <form action="/users/search" method="post">
+            <div class="ui icon input">
+                <input name="searchText" type="text" placeholder="Filtrer...">
+                <i class="search icon"></i>
+            </div>
+        </form>
+    </div>
+</div>
 {{/users.size}}
-<ul>
+<div class="ui middle aligned divided list">
 {{#users}}
-    <li>{{firstName}} {{lastName}}</li>
+    <div class="item">
+        <div class="right floated content">
+            <a href="/users/edit/{{id}}"
+               class="ui green mini circular icon button"
+               title="Modifier"
+            >
+                <i class="ui edit icon"></i>
+            </a>
+            <a href="/users/delete/{{id}}"
+               class="ui red circular mini icon button"
+               title="Supprimer"
+            >
+                <i class="ui remove icon"></i>
+            </a>
+        </div>
+        <div class="middle aligned content">
+            <img class="ui avatar image" src="https://fomantic-ui.com/images/wireframe/square-image.png">
+            {{firstName}} {{lastName}}
+        </div>
+    </div>
 {{/users}}
 
     {{#user}}
         {{login}}
     {{/user}}
-</ul>
-</body>
-</html>
+</div>
+{{#message}}
+    <div id="msg" class="ui icon {{className}} message toast">
+        <i class="{{icon}} icon"></i>
+        <div class="content">
+            <div class="header">
+                {{title}}
+            </div>
+            <p>{{content}}</p>
+        </div>
+    </div>
+<script>
+$('#msg').toast({showProgress: "bottom"});
+$('#msg').hide();
+</script>
+{{/message}}
+{{> /include/footer }}
