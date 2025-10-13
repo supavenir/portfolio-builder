@@ -6,6 +6,7 @@ import fr.caensup.portfolio.exceptions.UserNotFoundException;
 import fr.caensup.portfolio.repositories.UserRepository;
 import fr.caensup.portfolio.ui.UiMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,12 +24,20 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Value("${application.url}")
+    private String applicationUrl;
+    
+    @ModelAttribute("applicationUrl")
+    private String getApplicationUrl(){
+        return applicationUrl;
+    }
+
     @RequestMapping(value = "",method = {
             RequestMethod.GET,
             RequestMethod.POST
     })
     public ModelAndView index(){
-        List<User> users=userRepository.findAll();
+        List<User> users=userRepository.findAllWithProfiles();
         return new ModelAndView("/users/index","users",users);
     }
 
@@ -97,7 +106,7 @@ public class UserController {
 
     @GetMapping("/delete/{id}")
     public RedirectView delete(
-            @PathVariable UUID id,
+            @PathVariable() UUID id,
             RedirectAttributes attrs
             ) throws UserNotFoundException {
         Optional<User> optUser=userRepository.findById(id);

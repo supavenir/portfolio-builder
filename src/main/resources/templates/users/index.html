@@ -18,7 +18,10 @@
 {{/users.size}}
 <div class="ui middle aligned divided list">
 {{#users}}
-    <div class="item">
+    <div class="item user"
+         data-username="{{firstName}} {{lastName}}"
+         data-id="{{id}}"
+         data-profile-size="{{profiles.size}}">
         <div class="right floated content">
             <a href="/users/edit/{{id}}"
                class="ui green mini circular icon button"
@@ -26,8 +29,7 @@
             >
                 <i class="ui edit icon"></i>
             </a>
-            <a href="/users/delete/{{id}}"
-               class="ui red circular mini icon button"
+            <a class="ui red circular mini icon button remove"
                title="Supprimer"
             >
                 <i class="ui remove icon"></i>
@@ -36,6 +38,9 @@
         <div class="middle aligned content">
             <img class="ui avatar image" src="https://fomantic-ui.com/images/wireframe/square-image.png">
             {{firstName}} {{lastName}}
+            <div class="ui label">
+                <i class="user icon"></i> {{profiles.size}}
+            </div>
         </div>
     </div>
 {{/users}}
@@ -44,6 +49,23 @@
         {{login}}
     {{/user}}
 </div>
+
+<div class="ui modal">
+    <i class="close icon"></i>
+    <div class="header">
+        Confirmation de suppression
+    </div>
+    <div class="content">
+        <div class="description">
+        </div>
+    </div>
+    <div class="actions">
+        <button class="ui deny button">Annuler</button>
+        <div class="ui button confirm-remove">Confirmer la suppression</div>
+    </div>
+</div>
+
+
 {{#message}}
     <div id="msg" class="ui icon {{className}} message toast">
         <i class="{{icon}} icon"></i>
@@ -59,4 +81,29 @@ $('#msg').toast({showProgress: "bottom"});
 $('#msg').hide();
 </script>
 {{/message}}
+<script>
+//Jquery
+$(()=> {
+        $("a.remove").click((event) => {
+            const link = $(event.target);
+            const userItem = link.closest(".item.user");
+
+            const username = userItem.data("username");
+            const profileSize = userItem.data("profileSize");
+            const id = userItem.data("id");
+
+            const plus = parseInt(profileSize) > 0 ? `et se(s) ${profileSize} profil(s)` : "";
+            const message = `Voulez-vous supprimer ${username} ${plus} ?`;
+            const dialog = $(document.querySelector(".ui.modal"));
+            dialog.data("id",id);
+            $(".ui.modal .description").html(message);
+            dialog.modal('show');
+        });
+        $(".confirm-remove").click(() => {
+            const id=$(".ui.modal").data('id');
+            window.location.href=`{{applicationUrl}}/users/delete/${id}`;
+        });
+    }
+    );
+</script>
 {{> /include/footer }}

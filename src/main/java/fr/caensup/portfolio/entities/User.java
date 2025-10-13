@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -15,7 +13,7 @@ public class User {
     @Id
     private UUID id=UUID.randomUUID();
 
-    @Column(length = 20)
+    @Column(length = 20, unique = true)
     private String login;
 
     @Column(length = 20)
@@ -24,7 +22,7 @@ public class User {
     @Column(length = 35)
     private String lastName;
 
-    @OneToMany(mappedBy = "owner")
-    private Set<Profile> profiles = new HashSet<>();
+    @OneToMany(mappedBy = "owner",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private List<Profile> profiles = new ArrayList<>();
 
 }

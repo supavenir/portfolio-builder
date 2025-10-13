@@ -18,6 +18,6 @@ public class Profile {
     @Column(length = 60)
     private String name;
 
-    @ManyToOne
+    @ManyToOne()
     private User owner;
 }
