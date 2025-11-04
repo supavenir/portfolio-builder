@@ -4,6 +4,7 @@ import fr.caensup.portfolio.dtos.UserDto;
 import fr.caensup.portfolio.entities.User;
 import fr.caensup.portfolio.exceptions.UserNotFoundException;
 import fr.caensup.portfolio.repositories.UserRepository;
+import fr.caensup.portfolio.services.UserService;
 import fr.caensup.portfolio.ui.UiMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,9 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/users")
 public class UserController {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -125,6 +129,13 @@ public class UserController {
     public ModelAndView search(@RequestParam String searchText){
         List<User> users=userRepository.search("%"+searchText.toLowerCase()+"%");
         return new ModelAndView("/users/index","users",users);
+    }
+
+    @GetMapping("/createUser/{login}/{password}")
+    @ResponseBody
+    public String createUser(@PathVariable String login,@PathVariable String password){
+        User u=userService.createUser(login,password);
+        return "Utilisateur " + u.getLogin() + " ajouté !";
     }
 
 }
