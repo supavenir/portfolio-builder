@@ -35,7 +35,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 ).csrf(AbstractHttpConfigurer::disable)
                 .headers(headers->headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .formLogin(Customizer.withDefaults());
+                .formLogin(
+                        (form) -> form.loginPage("/login").defaultSuccessUrl("/users", true).permitAll());
         return http.build();
     }
 
