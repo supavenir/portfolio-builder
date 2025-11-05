@@ -4,6 +4,7 @@ import fr.caensup.portfolio.dtos.UserDto;
 import fr.caensup.portfolio.entities.User;
 import fr.caensup.portfolio.exceptions.UserNotFoundException;
 import fr.caensup.portfolio.repositories.UserRepository;
+import fr.caensup.portfolio.services.UserSecurityService;
 import fr.caensup.portfolio.services.UserService;
 import fr.caensup.portfolio.ui.UiMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+
+    @Autowired
+    private UserSecurityService userSecurityService;
 
     @Autowired
     private UserRepository userRepository;
@@ -47,7 +52,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ModelAndView getOne(@PathVariable UUID id){
-        Optional<User> opt=userRepository.findById(id);
+        Optional<User> opt=userService.getUserById(id);
         if(opt.isPresent()){
             return new ModelAndView("/users/index","user",opt.get());
         }
@@ -66,9 +71,7 @@ public class UserController {
             @ModelAttribute UserDto userDto,
             RedirectAttributes attrs
     ){
-        User newUser=new User();
-        userDto.toEntity(newUser);
-        userRepository.save(newUser);
+        User newUser= userService.createNewUser(userDto);
         attrs.addFlashAttribute("message",
                 new UiMessage("Ajout","L'utilisateur "+newUser.getLogin()+ " a été ajouté","success","info circle")
         );
@@ -94,18 +97,11 @@ public class UserController {
             @ModelAttribute UserDto userDto,
             RedirectAttributes attrs
     ) throws UserNotFoundException {
-        Optional<User> optUser=userRepository.findById(id);
-        if(optUser.isPresent()) {
-            User user=optUser.get();
-            userDto.toEntity(user);
-            userRepository.save(user);
-            attrs.addFlashAttribute("message",
+        User user= userService.updateUser(id,userDto);
+         attrs.addFlashAttribute("message",
                     new UiMessage("Modification","L'utilisateur "+user.getLogin()+ " a été modifié","success","info circle")
-            );
-            return new RedirectView("/users");
-        }
-
-        throw new UserNotFoundException("Utilisateur d'id "+id+" non trouvé !");
+         );
+         return new RedirectView("/users");
     }
 
     @GetMapping("/delete/{id}")
@@ -134,7 +130,7 @@ public class UserController {
     @GetMapping("/createUser/{login}/{password}")
     @ResponseBody
     public String createUser(@PathVariable String login,@PathVariable String password){
-        User u=userService.createUser(login,password);
+        User u= userSecurityService.createUser(login,password);
         return "Utilisateur " + u.getLogin() + " ajouté !";
     }
 
