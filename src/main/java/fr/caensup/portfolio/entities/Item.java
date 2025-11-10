@@ -1,9 +1,6 @@
 package fr.caensup.portfolio.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -32,4 +29,7 @@ public class Item {
 
     @ManyToOne(optional = false)
     private ItemType type;
+
+    @ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Establishment establishment;
 }
